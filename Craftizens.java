@@ -56,8 +56,13 @@ public class Craftizens extends Plugin {
 		INTERACT_ANGLE_VARIATION = props.getInt("npc-interact-angle-variation",25);
 		QADMIN_BOUNDARY_MARKER = props.getInt("qadmin-boundary-marker",340);
 		QUESTS_ENABLED = props.getBoolean("quests-enabled",true);
-	
-		data = new CraftizenSQLDataSource();
+		
+		String dataSource = props.getString("data-source","mysql");
+		if (dataSource.equals("mysql")) {
+			data = new CraftizenSQLDataSource();
+		} else {
+			data = new CraftizenFlatfileDataSource();
+		}
 	
 		Craftizen.getPlayerList();		
 		npcs = data.loadCraftizens();

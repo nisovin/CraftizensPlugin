@@ -6,6 +6,8 @@ import java.io.*;
 public class CraftizenFlatfileDataSource extends CraftizenDataSource {
 
 	private static final String DATA_FOLDER = "craftizens/";
+	
+	private HashMap<String,ArrayList<String>> npcQuests;
 
 	public CraftizenFlatfileDataSource() {
 		(new File(DATA_FOLDER)).mkdir();
@@ -14,8 +16,12 @@ public class CraftizenFlatfileDataSource extends CraftizenDataSource {
 	public HashSet<Craftizen> loadCraftizens() {
 		synchronized (craftizenLock) {
 			HashSet<Craftizen> npcs = new HashSet<Craftizen>();
-		
+			npcQuests = new HashMap<String,ArrayList<String>>();
+			
+			// get file list
 			File [] files = (new File(DATA_FOLDER)).listFiles();
+			
+			// load npc data
 			for (File file : files) {
 				if (file.getName().startsWith("npc-")) {
 					PropertiesFile data = new PropertiesFile(DATA_FOLDER + file.getName());
@@ -38,8 +44,12 @@ public class CraftizenFlatfileDataSource extends CraftizenDataSource {
 					}
 					npc.setDialog(dialog);
 					npcs.add(npc);
+					npcQuests.put(npc.getId(), new ArrayList<String>());
 				}
 			}
+			
+			// TODO: load quest data
+			
 		
 			return npcs;
 		}
