@@ -4,26 +4,26 @@ import java.util.List;
 public abstract class NonPlayerCharacter {
     public static List<?> players;
     
-    private es user;
-    private gv handler; 
+    private et user;
+    private gw handler; 
     
     public NonPlayerCharacter(String name, double x, double y, double z, float rotation, float pitch, int itemInHand) {
         if (players == null) getPlayerList();
     
         MinecraftServer s = etc.getServer().getMCServer();
         
-        user = new es(s, s.e, name, new ju(s.e));
+        user = new et(s, s.e, name, new jv(s.e));
         teleportTo(x,y,z,rotation,pitch);
         if (itemInHand > 0) {
             setItemInHand(itemInHand);
         }
     
-        handler = new gv(user, 512,  1 , true );
+        handler = new gw(user, 512,  1 , true );
     }
     
     public void delete() {
         for (Object player : players) {
-            ((es)player).a.b(new dh(handler.a.g));
+            ((et)player).a.b(new di(handler.a.g));
         }
     }
     
@@ -94,7 +94,7 @@ public abstract class NonPlayerCharacter {
     }
     
     public void setItemInHand(int type) {
-        user.am.a[0] = new hm(type);
+        user.am.a[0] = new hn(type);
     }
     
     public void teleportTo(double x, double y, double z, float rotation, float pitch) {

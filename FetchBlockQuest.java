@@ -118,7 +118,7 @@ public class FetchBlockQuest extends Quest {
 	}
 	
 	public void sendFakeBlockPacket(Player player, int x, int y, int z, int type) {
-		fm packet = new fm();
+		fn packet = new fn();
 		packet.a = x;
 		packet.b = y;
 		packet.c = z;
