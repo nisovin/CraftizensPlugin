@@ -1,12 +1,6 @@
 import java.util.HashSet;
 import java.util.HashMap;
 import java.util.ArrayList;
-import java.util.List;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.util.Scanner;
 import java.util.logging.*;
 
 public class Craftizens extends Plugin {
@@ -73,7 +67,7 @@ public class Craftizens extends Plugin {
 			CraftizensListener.loadActiveQuests(p);
 		}
 		
-		log.info("Craftizens v0.6 loaded successfully!");
+		log.info("Craftizens v0.7 loaded successfully!");
 	}
 	
 	public void disable() {

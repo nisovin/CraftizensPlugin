@@ -1,5 +1,3 @@
-import net.minecraft.server.MinecraftServer;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.logging.*;
 import java.util.Random;
@@ -154,7 +152,14 @@ public class Craftizen extends NonPlayerCharacter {
 	public String getName() {
 		return name;
 	}
-	
+
+	/**
+	 * @return the speed
+	 */
+	public double getSpeed() {
+		return speed;
+	}
+
 	public enum RouteType {
 		NONE, WANDER, PATROL
 	}

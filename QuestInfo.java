@@ -11,10 +11,13 @@ public class QuestInfo {
 	public String turnIn;
 	public String prereq;
 	
+	public String rankReq;
+	public String rankReward;
+	
 	public String itemsProvidedStr;
-	public HashMap<Integer,Integer> itemsProvided;
+	public HashMap<Integer,Integer> itemsProvided = new HashMap<Integer, Integer>();
 	public String rewardsStr;
-	public HashMap<Integer,Integer> rewards;
+	public HashMap<Integer,Integer> rewards = new HashMap<Integer, Integer>();
 	
 	public String location;
 	public String data;
@@ -27,7 +30,7 @@ public class QuestInfo {
 		this.desc = "";
 	}
 	
-	public QuestInfo(String id, String type, String name, String desc, String pickUp, String turnIn, String prereq, String itemsProvided, String rewards, String location, String data, String completionText) {
+	public QuestInfo(String id, String type, String name, String desc, String pickUp, String turnIn, String prereq, String itemsProvided, String rewards, String location, String data, String completionText, String rankReq, String rankReward) {
 		// get normal data
 		this.id = id;
 		this.type = type;
@@ -74,6 +77,8 @@ public class QuestInfo {
 		this.location = location;
 		this.data = data;
 		this.completionText = completionText;
+		this.rankReq = rankReq;
+		this.rankReward = rankReward;
 	}
 	
 	public void show(Player player) {
@@ -171,6 +176,35 @@ public class QuestInfo {
 		}
 	}
 	
+	/**
+	 * @param rankReq the rankReq to set
+	 */
+	public boolean setRankReq(String rankReq) {
+		if (rankReq.matches("^[a-zA-Z0-9]+$")) {
+			this.rankReq = rankReq;
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * @param rankReward the rankReward to set
+	 */
+	public boolean setRankReward(String rankReward) {
+		if (rankReward.matches("^[a-zA-Z0-9]+$")) {
+			etc.getInstance();
+			Group g = etc.getDataSource().getGroup(rankReward);
+			if (g != null) {
+				this.rankReward = rankReward;
+				return true;
+			}
+			return false;
+		} else {
+			return false;
+		}
+	}
+
 	public boolean setItemsProvided(String i) {
 		if (i.matches("[a-zA-Z0-9\\- ]+:([0-9]+ [0-9]+,)*[0-9]+ [0-9]+")) {
 			this.itemsProvidedStr = i;

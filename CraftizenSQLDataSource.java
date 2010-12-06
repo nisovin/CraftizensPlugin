@@ -246,7 +246,9 @@ public class CraftizenSQLDataSource extends CraftizenDataSource {
 							results.getString("rewards"),
 							results.getString("location"),
 							results.getString("data"),
-							results.getString("completion_text")
+							results.getString("completion_text"),
+							results.getString("rankreq"),
+							results.getString("rankreward")
 						);
 				}
 			} catch (SQLException e) {
@@ -281,12 +283,25 @@ public class CraftizenSQLDataSource extends CraftizenDataSource {
 						"LEFT JOIN quests_completed qc2 ON qc2.player_name = ? AND qc2.quest_id = q.id " +
 						"LEFT JOIN quests_active qa ON qa.player_name = ? AND qa.quest_id = q.id " +
 						"WHERE c.npc_id = ? AND (q.prereq IS NULL OR qc.date_completed IS NOT NULL) " +
-						"AND qc2.quest_id IS NULL and qa.quest_id IS NULL "
+						"AND qc2.quest_id IS NULL and qa.quest_id IS NULL " +
+						"AND (q.rankreq IS NULL OR q.rankreq = ?) "
 					);
 				query.setString(1, p.getName().toLowerCase());
 				query.setString(2, p.getName().toLowerCase());
 				query.setString(3, p.getName().toLowerCase());
 				query.setString(4, c.getId());
+				
+				String[] groups = p.getGroups();
+				if (groups.length > 0) {
+					if(groups[0] == null || groups[0].equals("")) {
+						query.setString(5, "");
+					} else {
+						query.setString(5, groups[0]);
+					}
+				} else {
+					query.setString(5, "");
+				}
+				
 				results = query.executeQuery();
 				while (results.next()) {
 					QuestInfo q = new QuestInfo(
@@ -301,7 +316,9 @@ public class CraftizenSQLDataSource extends CraftizenDataSource {
 							results.getString("rewards"),
 							results.getString("location"),
 							results.getString("data"),
-							results.getString("completion_text")
+							results.getString("completion_text"),
+							results.getString("rankreq"),
+							results.getString("rankreward")
 						);
 					quests.add(q);
 				}
@@ -350,7 +367,9 @@ public class CraftizenSQLDataSource extends CraftizenDataSource {
 							results.getString("rewards"),
 							results.getString("location"),
 							results.getString("data"),
-							results.getString("completion_text")
+							results.getString("completion_text"),
+							results.getString("rankreq"),
+							results.getString("rankreward")
 						);
 					String s = results.getString("progress");
 					quests.put(q,s);
@@ -497,7 +516,8 @@ public class CraftizenSQLDataSource extends CraftizenDataSource {
 							"quest_name = ?, quest_type = ?, quest_desc = ?, " +
 							"start_npc = ?, end_npc = ?, prereq = ?, " +
 							"items_provided = ?, rewards = ?, " +
-							"location = ?, data = ?, completion_text = ? " +
+							"location = ?, data = ?, completion_text = ?, " +
+							"rankreq = ?, rankreward = ? " +
 							"WHERE id = ?");
 					query.setString(1,quest.name);
 					query.setString(2,quest.type);
@@ -510,10 +530,12 @@ public class CraftizenSQLDataSource extends CraftizenDataSource {
 					query.setString(9,quest.location);
 					query.setString(10,quest.data);
 					query.setString(11,quest.completionText);
-					query.setString(12,quest.id);
+					query.setString(12,quest.rankReq);
+					query.setString(13,quest.rankReward);
+					query.setString(14,quest.id);
 					query.executeUpdate();
 				} else {
-					query = conn.prepareStatement("INSERT INTO quests (id, quest_name, quest_type, quest_desc, start_npc, end_npc, prereq, items_provided, rewards, location, data, completion_text) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+					query = conn.prepareStatement("INSERT INTO quests (id, quest_name, quest_type, quest_desc, start_npc, end_npc, prereq, items_provided, rewards, location, data, completion_text, rankreq, rankreward) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 					query.setString(1,quest.id);
 					query.setString(2,quest.name);
 					query.setString(3,quest.type);
@@ -526,6 +548,8 @@ public class CraftizenSQLDataSource extends CraftizenDataSource {
 					query.setString(10,quest.location);
 					query.setString(11,quest.data);
 					query.setString(12,quest.completionText);
+					query.setString(13,quest.rankReq);
+					query.setString(14,quest.rankReward);
 					query.executeUpdate();					
 				}
 			} catch (SQLException e) {
