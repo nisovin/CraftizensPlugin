@@ -42,6 +42,33 @@ public abstract class Quest {
 				player.giveItem(i, info.rewards.get(i));
 			}
 		}
+		if (info.rankReward != null) {
+			setRank(player, info.rankReward);
+		}
+	}
+	
+	private void setRank(Player p, String rank) {
+		etc.getInstance();
+		Group g = etc.getDataSource().getGroup(rank);
+		if (g != null) {
+			String[] arrayOfString = { g.Name };
+			p.setGroups(arrayOfString);
+			p.setIgnoreRestrictions(g.IgnoreRestrictions);
+			p.setAdmin(g.Administrator);
+
+			int i = 0;
+
+			if (!etc.getDataSource().doesPlayerExist(p.getName())) {
+				i = 1;
+			}
+
+			if (i != 0)
+				etc.getDataSource().addPlayer(p);
+			else
+				etc.getDataSource().modifyPlayer(p);
+		} else {
+			p.sendMessage("Error setting rank. Please contact your local admin.");
+		}
 	}
 	
 	protected void complete() {

@@ -1,4 +1,3 @@
-import net.minecraft.server.MinecraftServer;
 import java.util.logging.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,8 +19,7 @@ public class CraftizensListener extends PluginListener {
 		return false;
 	}
 	
-	public void npcCommand(Player player, String [] command) {
-		MinecraftServer s = etc.getServer().getMCServer();	
+	public void npcCommand(Player player, String [] command) {	
 		if (command[1].equals("clear")) {
 			for (Craftizen npc : Craftizens.npcs) {
 				npc.delete();
@@ -68,14 +66,21 @@ public class CraftizensListener extends PluginListener {
 	
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void questCommand(Player player, String [] command) {
 		if (command.length == 1) {
 			questCommandUsage(player);
 		} else if ("view".startsWith(command[1].toLowerCase()) && command.length == 3) {
 			if (Craftizens.pendingQuests.containsKey(player.getName())) {
 				Object o = Craftizens.pendingQuests.get(player.getName());
-				if (o instanceof ArrayList) {
-					ArrayList<QuestInfo> quests = (ArrayList<QuestInfo>)o;
+				if (o instanceof ArrayList<?>) {
+					ArrayList<QuestInfo> quests = null;
+					try {
+// TODO: this is extremely poor programming practice. Need to refactor/fix later.
+						quests = (ArrayList<QuestInfo>) o;
+					} catch (ClassCastException e) {
+						Craftizen.log.warning("[Craftizen] Pending quests was not an ArrayList<QuestInfo>!");
+					}
 					int i = -1;
 					try {
 						i = Integer.parseInt(command[2]);
@@ -251,8 +256,10 @@ public class CraftizensListener extends PluginListener {
 				player.sendMessage("End NPC: " + q.turnIn);
 				player.sendMessage("Prereq quest: " + q.prereq);
 				player.sendMessage("Items prov: " + q.itemsProvidedStr);
-				player.sendMessage("Rewards: " + q.rewardsStr);
-				player.sendMessage("Comp text: " + ((q.completionText.length()>50)?q.completionText.substring(0,50)+"...":q.completionText));
+				player.sendMessage("Rewards: " + (q.rewardsStr == null ? "None" : q.rewardsStr));
+				player.sendMessage("Rank requirement: " + q.rankReq);
+				player.sendMessage("Rank reward: " + q.rankReward);
+				player.sendMessage("Comp text: " + ((q.completionText != null && q.completionText.length()>50)?q.completionText.substring(0,50)+"...":q.completionText));
 				player.sendMessage("Data: " + q.data);
 				q = null;
 			} else {
@@ -412,6 +419,42 @@ public class CraftizensListener extends PluginListener {
 					player.sendMessage("Use /qadmin prereq -delete to remove the prereq quest.");
 				}	
 			
+			// rankreq
+			} else if (command[1].equalsIgnoreCase("rankreq")) {
+				if (command.length == 3) {
+					if (command[2].equals("-delete")) {
+						quest.rankReq = null;
+						player.sendMessage("Quest rank requirement removed.");
+					} else if (quest.setRankReq(command[2])){
+						player.sendMessage("Quest rank requirmenet set to " + command[2] + ".");
+					} else {
+						player.sendMessage("Invalid rank requirement.");
+					}
+				} else if (command.length == 2 && quest.rankReq != null) {
+					player.sendMessage("Quest " + quest.id + " rank requirement: " + quest.rankReq);
+				} else {
+					player.sendMessage("Use /qadmin rankreq [rankname] to set the rank requirement.");
+					player.sendMessage("Use /qadmin rankreq -delete to remove the rank requirement.");
+				}
+
+			// rankreward
+			} else if (command[1].equalsIgnoreCase("rankreward")) {
+				if (command.length == 3) {
+					if (command[2].equals("-delete")) {
+						quest.rankReq = null;
+						player.sendMessage("Quest rank reward removed.");
+					} else if (quest.setRankReward(command[2])){
+						player.sendMessage("Quest rank reward set to " + command[2] + ".");
+					} else {
+						player.sendMessage("Invalid rank reward.");
+					}
+				} else if (command.length == 2 && quest.rankReward != null) {
+					player.sendMessage("Quest " + quest.id + " rank reward: " + quest.rankReward);
+				} else {
+					player.sendMessage("Use /qadmin rankreward [rankname] to set the rank reward.");
+					player.sendMessage("Use /qadmin rankreward -delete to remove the rank reward.");
+				}
+				
 			// items provided
 			} else if (command[1].equalsIgnoreCase("itemsprovided")) {
 				if (command.length > 2) {
@@ -629,7 +672,7 @@ public class CraftizensListener extends PluginListener {
 		if (x <= player.getX() && z <= player.getZ()) {
 			angle = 180 - angle;
 		} else if (x <= player.getX() && z >= player.getZ()) {
-			angle = angle;
+//			angle = angle;
 		} else if (x >= player.getX() && z >= player.getZ()) {
 			angle = 360 - angle;
 		} else {
