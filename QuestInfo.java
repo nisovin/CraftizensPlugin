@@ -14,6 +14,9 @@ public class QuestInfo {
 	public String rankReq;
 	public String rankReward;
 	
+	public int cost = 0;
+	public int prize = 0;
+	
 	public String itemsProvidedStr;
 	public HashMap<Integer,Integer> itemsProvided = new HashMap<Integer, Integer>();
 	public String rewardsStr;
@@ -30,7 +33,7 @@ public class QuestInfo {
 		this.desc = "";
 	}
 	
-	public QuestInfo(String id, String type, String name, String desc, String pickUp, String turnIn, String prereq, String itemsProvided, String rewards, String location, String data, String completionText, String rankReq, String rankReward) {
+	public QuestInfo(String id, String type, String name, String desc, String pickUp, String turnIn, String prereq, String itemsProvided, String rewards, String location, String data, String completionText, String rankReq, String rankReward, String cost, String prize) {
 		// get normal data
 		this.id = id;
 		this.type = type;
@@ -79,6 +82,37 @@ public class QuestInfo {
 		this.completionText = completionText;
 		this.rankReq = rankReq;
 		this.rankReward = rankReward;
+		
+		try {
+			this.cost = Integer.parseInt(cost);
+		} catch (NumberFormatException e) {
+			this.cost = 0;
+		}
+		
+		try {
+			this.prize = Integer.parseInt(prize);
+		} catch (NumberFormatException e) {
+			this.prize = 0;
+		}
+	}
+	
+	// this function uses hardcoded € because iConomy is not a singleton
+	// so I can't get iConony.moneyName
+	public boolean checkBalance(Player player, boolean deduct) {
+		if (Craftizens.ICONOMY_DETECTED) {
+			int money = iData.getBalance(player.getName());
+			if (money >= cost) {
+				if (deduct && cost > 0) {
+					iData.setBalance(player.getName(), money - cost);
+					player.sendMessage(Craftizens.TEXT_COLOR + "Taking cost of " + cost + ".");
+				}
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return true;
+		}
 	}
 	
 	public void show(Player player) {
@@ -100,6 +134,18 @@ public class QuestInfo {
 		}
 		if (!rewardsStr.equals("")) {
 			player.sendMessage(Craftizens.TEXT_COLOR + "   Reward: " + rewardsStr.split(":")[0]);
+		}
+		if (rankReq != null && !rankReq.equals("")) {
+			player.sendMessage(Craftizens.TEXT_COLOR + "   Rank Required: " + rankReq);
+		}
+		if (rankReward != null && !rankReward.equals("")) {
+			player.sendMessage(Craftizens.TEXT_COLOR + "   Rank Reward: " + rankReward);
+		}
+		if (Craftizens.ICONOMY_DETECTED && cost > 0) {
+			player.sendMessage(Craftizens.TEXT_COLOR + "   Cost: " + cost);
+		}
+		if (Craftizens.ICONOMY_DETECTED && prize > 0) {
+			player.sendMessage(Craftizens.TEXT_COLOR + "   Prize: " + prize);
 		}
 		player.sendMessage(Craftizens.TEXT_COLOR + "Type '/quest accept' to accept this quest.");
 	}
@@ -205,6 +251,38 @@ public class QuestInfo {
 		}
 	}
 
+	/**
+	 * @param cost the cost to set
+	 */
+	public boolean setCost(String cost) {
+		if (cost.matches("^[0-9]+$")) {
+			try {
+				this.cost = Integer.parseInt(cost);
+				return true;
+			} catch (NumberFormatException e) {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * @param prize the prize to set
+	 */
+	public boolean setPrize(String prize) {
+		if (prize.matches("^[0-9]+$")) {
+			try {
+				this.prize = Integer.parseInt(prize);
+				return true;
+			} catch (NumberFormatException e) {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
+	
 	public boolean setItemsProvided(String i) {
 		if (i.matches("[a-zA-Z0-9\\- ]+:([0-9]+ [0-9]+,)*[0-9]+ [0-9]+")) {
 			this.itemsProvidedStr = i;

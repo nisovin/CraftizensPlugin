@@ -105,14 +105,18 @@ public class CraftizensListener extends PluginListener {
 				Object o = Craftizens.pendingQuests.get(player.getName());
 				if (o instanceof QuestInfo) {
 					QuestInfo qi = (QuestInfo)o;
-					Quest q = qi.createQuest(player, true);
-					Craftizens.pendingQuests.remove(player.getName());
-					if (!Craftizens.activeQuests.containsKey(player.getName())) {
-						Craftizens.activeQuests.put(player.getName(),new ArrayList<Quest>());
+					if (qi.checkBalance(player, true)) {
+						Quest q = qi.createQuest(player, true);
+						Craftizens.pendingQuests.remove(player.getName());
+						if (!Craftizens.activeQuests.containsKey(player.getName())) {
+							Craftizens.activeQuests.put(player.getName(),new ArrayList<Quest>());
+						}
+						Craftizens.activeQuests.get(player.getName()).add(q);
+						Craftizens.data.saveActiveQuest(player, q);
+						player.sendMessage(Craftizens.TEXT_COLOR + "Quest accepted!");
+					} else {
+						player.sendMessage(Craftizens.TEXT_COLOR + "You can't afford this quest! It costs " + qi.cost + ".");
 					}
-					Craftizens.activeQuests.get(player.getName()).add(q);
-					Craftizens.data.saveActiveQuest(player, q);
-					player.sendMessage(Craftizens.TEXT_COLOR + "Quest accepted!");
 				} else {
 					player.sendMessage(Craftizens.TEXT_COLOR + "No quest to accept.");
 				}
@@ -259,6 +263,8 @@ public class CraftizensListener extends PluginListener {
 				player.sendMessage("Rewards: " + (q.rewardsStr == null ? "None" : q.rewardsStr));
 				player.sendMessage("Rank requirement: " + q.rankReq);
 				player.sendMessage("Rank reward: " + q.rankReward);
+				player.sendMessage("Cost: " + q.cost + " (iConomy is currently " + (Craftizens.ICONOMY_DETECTED ? "enabled)" : "disabled)"));
+				player.sendMessage("Prize: " + q.prize + " (iConomy is currently " + (Craftizens.ICONOMY_DETECTED ? "enabled)" : "disabled)"));
 				player.sendMessage("Comp text: " + ((q.completionText != null && q.completionText.length()>50)?q.completionText.substring(0,50)+"...":q.completionText));
 				player.sendMessage("Data: " + q.data);
 				q = null;
@@ -295,6 +301,19 @@ public class CraftizensListener extends PluginListener {
 				player.sendMessage("Quest " + command[2] + " deleted.");
 			} else {
 				player.sendMessage("No such quest.");
+			}
+			
+		// iConomy Hook
+		} else if (command[1].equalsIgnoreCase("iConomy")) {
+			if (command.length > 2 && command[2].equals("-disable")) {
+				Craftizens.ICONOMY_DETECTED = false;
+				player.sendMessage("iConomy disabled. Use /qadmin iConomy to turn it back on.");
+			} else if (Craftizens.loadiConomy()) {
+				player.sendMessage("iConomy loaded successfully.");
+				player.sendMessage("use /qadmin iConomy -disable to turn it off.");
+			} else {
+				player.sendMessage("iConomy failed to load.");
+				player.sendMessage("Perhaps you don't have the plugin running?");
 			}
 			
 		} else if (command.length >= 2 && Craftizens.newQuests != null && Craftizens.newQuests.containsKey(player.getName())) {
@@ -441,7 +460,7 @@ public class CraftizensListener extends PluginListener {
 			} else if (command[1].equalsIgnoreCase("rankreward")) {
 				if (command.length == 3) {
 					if (command[2].equals("-delete")) {
-						quest.rankReq = null;
+						quest.rankReward = null;
 						player.sendMessage("Quest rank reward removed.");
 					} else if (quest.setRankReward(command[2])){
 						player.sendMessage("Quest rank reward set to " + command[2] + ".");
@@ -453,6 +472,42 @@ public class CraftizensListener extends PluginListener {
 				} else {
 					player.sendMessage("Use /qadmin rankreward [rankname] to set the rank reward.");
 					player.sendMessage("Use /qadmin rankreward -delete to remove the rank reward.");
+				}
+
+			// cost
+			} else if (command[1].equalsIgnoreCase("cost")) {
+				if (command.length == 3) {
+					if (command[2].equals("-delete")) {
+						quest.cost = 0;
+						player.sendMessage("Quest cost removed.");
+					} else if (quest.setCost(command[2])){
+						player.sendMessage("Quest cost set to " + command[2] + ".");
+					} else {
+						player.sendMessage("Invalid cost.");
+					}
+				} else if (command.length == 2) {
+					player.sendMessage("Quest " + quest.id + " cost: " + quest.cost);
+				} else {
+					player.sendMessage("Use /qadmin cost [rankname] to set the quest cost.");
+					player.sendMessage("Use /qadmin cost -delete to remove the quest cost.");
+				}
+				
+			// prize
+			} else if (command[1].equalsIgnoreCase("prize")) {
+				if (command.length == 3) {
+					if (command[2].equals("-delete")) {
+						quest.prize = 0;
+						player.sendMessage("Quest prize removed.");
+					} else if (quest.setPrize(command[2])){
+						player.sendMessage("Quest prize set to " + command[2] + ".");
+					} else {
+						player.sendMessage("Invalid prize.");
+					}
+				} else if (command.length == 2) {
+					player.sendMessage("Quest " + quest.id + " prize: " + quest.prize);
+				} else {
+					player.sendMessage("Use /qadmin prize [rankname] to set the quest prize.");
+					player.sendMessage("Use /qadmin prize -delete to remove the quest prize.");
 				}
 				
 			// items provided

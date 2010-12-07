@@ -7,7 +7,8 @@ public class Craftizens extends Plugin {
 	static final Logger log = Logger.getLogger("Minecraft");
 	
 	public static boolean DEBUG = true;
-	public static String NPC_PREFIX = "§e";
+//	public static String NPC_PREFIX = "§e";
+	public static String NPC_PREFIX = "�e";
 	public static String NPC_SUFFIX = " (NPC)";
 	public static String TEXT_COLOR = Colors.Yellow;
 	public static int INTERACT_ITEM = 340;
@@ -16,6 +17,7 @@ public class Craftizens extends Plugin {
 	public static int INTERACT_ANGLE_VARIATION = 25;
 	public static int QADMIN_BOUNDARY_MARKER = 340;
 	public static boolean QUESTS_ENABLED = true;
+	public static boolean ICONOMY_DETECTED = false;
 	
 	public static CraftizenDataSource data;
 	public static HashSet<Craftizen> npcs;
@@ -50,9 +52,11 @@ public class Craftizens extends Plugin {
 		INTERACT_ANGLE_VARIATION = props.getInt("npc-interact-angle-variation",25);
 		QADMIN_BOUNDARY_MARKER = props.getInt("qadmin-boundary-marker",340);
 		QUESTS_ENABLED = props.getBoolean("quests-enabled",true);
-	
+		
 		data = new CraftizenSQLDataSource();
 	
+		loadiConomy();
+		
 		Craftizen.getPlayerList();		
 		npcs = data.loadCraftizens();
 		
@@ -67,7 +71,7 @@ public class Craftizens extends Plugin {
 			CraftizensListener.loadActiveQuests(p);
 		}
 		
-		log.info("Craftizens v0.7 loaded successfully!");
+		log.info("[Craftizens] Craftizens v0.7 loaded successfully!");
 	}
 	
 	public void disable() {
@@ -95,4 +99,24 @@ public class Craftizens extends Plugin {
 		data = null;
 	}
 	
+	public static boolean loadiConomy() {
+		if (etc.getLoader().getPlugin("iConomy") != null) {
+			PropertiesFile iConomySettings = new PropertiesFile(iData.mainDir + "settings.properties");
+			// MySQL
+			String driver = iConomySettings.getString("driver", "com.mysql.jdbc.Driver");
+			String user = iConomySettings.getString("user", "root");
+			String pass = iConomySettings.getString("pass", "root");
+			String db = iConomySettings.getString("db", "jdbc:mysql://localhost:3306/minecraft");
+
+			// Data
+			iData.setup(true, 0, driver, user, pass, db);
+			log.info("[Craftizens] iConomy loaded successfully.");
+			ICONOMY_DETECTED = true;
+			return true;
+		} else {
+			log.warning("[Craftizens] iConomy failed to load.");
+			ICONOMY_DETECTED = false;
+			return false;
+		}
+	}
 }

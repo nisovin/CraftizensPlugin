@@ -45,6 +45,15 @@ public abstract class Quest {
 		if (info.rankReward != null) {
 			setRank(player, info.rankReward);
 		}
+		
+		if (Craftizens.ICONOMY_DETECTED) {
+			if (info.prize > 0) {
+				int money = iData.getBalance(player.getName());
+				iData.setBalance(player.getName(), money + info.prize);
+				
+				player.sendMessage("Awarding cash prize of " + info.prize + ".");
+			}
+		}
 	}
 	
 	private void setRank(Player p, String rank) {
