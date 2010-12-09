@@ -18,6 +18,7 @@ public class Craftizens extends Plugin {
 	public static int QADMIN_BOUNDARY_MARKER = 340;
 	public static boolean QUESTS_ENABLED = true;
 	public static boolean ICONOMY_DETECTED = false;
+	public static String VERSION = "v0.7.2";
 	
 	public static CraftizenDataSource data;
 	public static HashSet<Craftizen> npcs;
@@ -71,7 +72,7 @@ public class Craftizens extends Plugin {
 			CraftizensListener.loadActiveQuests(p);
 		}
 		
-		log.info("[Craftizens] Craftizens v0.7 loaded successfully!");
+		log.info("[Craftizens] Craftizens " + VERSION + " loaded successfully!");
 	}
 	
 	public void disable() {
@@ -102,6 +103,8 @@ public class Craftizens extends Plugin {
 	public static boolean loadiConomy() {
 		if (etc.getLoader().getPlugin("iConomy") != null) {
 			PropertiesFile iConomySettings = new PropertiesFile(iData.mainDir + "settings.properties");
+			boolean mysql = iConomySettings.getBoolean("use-mysql", false);
+			
 			// MySQL
 			String driver = iConomySettings.getString("driver", "com.mysql.jdbc.Driver");
 			String user = iConomySettings.getString("user", "root");
@@ -109,7 +112,7 @@ public class Craftizens extends Plugin {
 			String db = iConomySettings.getString("db", "jdbc:mysql://localhost:3306/minecraft");
 
 			// Data
-			iData.setup(true, 0, driver, user, pass, db);
+			iData.setup(mysql, 0, driver, user, pass, db);
 			log.info("[Craftizens] iConomy loaded successfully.");
 			ICONOMY_DETECTED = true;
 			return true;
