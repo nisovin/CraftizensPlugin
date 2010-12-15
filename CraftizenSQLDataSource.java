@@ -7,15 +7,44 @@ import java.util.HashMap;
 
 public class CraftizenSQLDataSource extends CraftizenDataSource {
 	static final Logger log = Logger.getLogger("Minecraft");
-	
+    static protected Connection connection = null;
+
+    static public Connection getSQLConnection() throws SQLException
+    {
+        if (connection == null) {
+            if (Craftizens.DATA_SOURCE_DRIVER_NAME.isEmpty()) {
+                connection = etc.getSQLConnection();
+            } else {
+                try {
+                    Class.forName(Craftizens.DATA_SOURCE_DRIVER_NAME);
+                } catch (ClassNotFoundException ex) {
+                    log.log(Level.SEVERE, null, ex);
+                    return null;
+                }
+                connection = DriverManager.getConnection(Craftizens.DATA_SOURCE_CONNECTION_URL, Craftizens.DATA_SOURCE_USERNAME, Craftizens.DATA_SOURCE_PASSWORD);
+            }
+        } else {
+            if (connection.isClosed()) {
+                connection = null;
+                log.info("[" + Craftizens.NAME + "] SQL-Connection got closed; Reconnecting!");
+                return getSQLConnection();
+            } else if (!connection.isValid(0)) {
+                connection = null;
+                log.info("[" + Craftizens.NAME + "] SQL-Connection got invalid; Reconnecting!");
+                return getSQLConnection();
+            }
+        }
+        return connection;
+    }
+
 	public void sample() {
 		synchronized (dbLock) {		
 			Connection conn = null;
 			PreparedStatement query = null;
 			ResultSet results = null;
 			try {
-				conn = etc.getSQLConnection();
-				query = conn.prepareStatement("select * from");
+				conn = getSQLConnection();
+				query = conn.prepareStatement("SELECT * FROM");
 				results = query.executeQuery();
 				while (results.next()) {
 				}
@@ -40,7 +69,7 @@ public class CraftizenSQLDataSource extends CraftizenDataSource {
 			PreparedStatement query = null;
 			ResultSet results = null;
 			try {
-				conn = etc.getSQLConnection();
+				conn = getSQLConnection();
 				query = conn.prepareStatement("SELECT * FROM craftizens");
 				results = query.executeQuery();
 				while (results.next()) {
@@ -90,7 +119,7 @@ public class CraftizenSQLDataSource extends CraftizenDataSource {
 			PreparedStatement query = null;
 			ResultSet results = null;
 			try {
-				conn = etc.getSQLConnection();
+				conn = getSQLConnection();
 				
 				// check if npc exists already
 				boolean exists = false;
@@ -148,7 +177,7 @@ public class CraftizenSQLDataSource extends CraftizenDataSource {
 			PreparedStatement query = null;
 			ResultSet results = null;
 			try {
-				conn = etc.getSQLConnection();
+				conn = getSQLConnection();
 				query = conn.prepareStatement("INSERT INTO craftizens_dialog (npc_id, dialog_id, dialog_text) VALUES (?,?,?)");
 				query.setString(1,npcid);
 				query.setString(2,dialogid);
@@ -173,7 +202,7 @@ public class CraftizenSQLDataSource extends CraftizenDataSource {
 			PreparedStatement query = null;
 			ResultSet results = null;
 			try {
-				conn = etc.getSQLConnection();
+				conn = getSQLConnection();
 				query = conn.prepareStatement("DELETE FROM craftizens WHERE npc_id = ?");
 				query.setString(1,id);
 				query.executeUpdate();
@@ -198,7 +227,7 @@ public class CraftizenSQLDataSource extends CraftizenDataSource {
 			PreparedStatement query = null;
 			ResultSet results = null;
 			try {
-				conn = etc.getSQLConnection();
+				conn = getSQLConnection();
 				query = conn.prepareStatement("SELECT id FROM quests ORDER BY id");
 				results = query.executeQuery();
 				while (results.next()) {
@@ -229,29 +258,29 @@ public class CraftizenSQLDataSource extends CraftizenDataSource {
 			PreparedStatement query = null;
 			ResultSet results = null;
 			try {
-				conn = etc.getSQLConnection();
+				conn = getSQLConnection();
 				query = conn.prepareStatement("SELECT * FROM quests WHERE id = ?");
 				query.setString(1,id);
 				results = query.executeQuery();
 				if (results.next()) {
 					quest = new QuestInfo(
-							results.getString("id"),
-							results.getString("quest_type"),
-							results.getString("quest_name"),
-							results.getString("quest_desc"),
-							results.getString("start_npc"),
-							results.getString("end_npc"),
-							results.getString("prereq"),
-							results.getString("items_provided"),
-							results.getString("rewards"),
-							results.getString("location"),
-							results.getString("data"),
-							results.getString("completion_text"),
-							results.getString("rankreq"),
-							results.getString("rankreward"),
-							results.getString("cost"),
-							results.getString("prize")
-						);
+                        results.getString("id"),
+                        results.getString("quest_type"),
+                        results.getString("quest_name"),
+                        results.getString("quest_desc"),
+                        results.getString("start_npc"),
+                        results.getString("end_npc"),
+                        results.getString("prereq"),
+                        results.getString("items_provided"),
+                        results.getString("rewards"),
+                        results.getString("location"),
+                        results.getString("data"),
+                        results.getString("completion_text"),
+                        results.getString("rankreq"),
+                        results.getString("rankreward"),
+                        results.getString("cost"),
+                        results.getString("prize")
+                    );
 				}
 			} catch (SQLException e) {
 				log.log(Level.SEVERE,"DB Error loading quest info "+id,e);
@@ -276,14 +305,14 @@ public class CraftizenSQLDataSource extends CraftizenDataSource {
 			PreparedStatement query = null;
 			ResultSet results = null;
 			try {
-				conn = etc.getSQLConnection();
+				conn = getSQLConnection();
 				query = conn.prepareStatement(
 						"SELECT q.* " +
-						"FROM craftizens c " +
-						"JOIN quests q ON q.start_npc = c.npc_id " +
-						"LEFT JOIN quests_completed qc ON qc.player_name = ? AND qc.quest_id = q.prereq " +
-						"LEFT JOIN quests_completed qc2 ON qc2.player_name = ? AND qc2.quest_id = q.id " +
-						"LEFT JOIN quests_active qa ON qa.player_name = ? AND qa.quest_id = q.id " +
+						"FROM craftizens AS c " +
+						"JOIN quests AS q ON q.start_npc = c.npc_id " +
+						"LEFT JOIN quests_completed AS qc ON qc.player_name = ? AND qc.quest_id = q.prereq " +
+						"LEFT JOIN quests_completed AS qc2 ON qc2.player_name = ? AND qc2.quest_id = q.id " +
+						"LEFT JOIN quests_active AS qa ON qa.player_name = ? AND qa.quest_id = q.id " +
 						"WHERE c.npc_id = ? AND (q.prereq IS NULL OR qc.date_completed IS NOT NULL) " +
 						"AND qc2.quest_id IS NULL and qa.quest_id IS NULL " +
 						"AND (q.rankreq IS NULL OR q.rankreq = ?) "
@@ -349,34 +378,34 @@ public class CraftizenSQLDataSource extends CraftizenDataSource {
 			PreparedStatement query = null;
 			ResultSet results = null;
 			try {
-				conn = etc.getSQLConnection();
+				conn = getSQLConnection();
 				query = conn.prepareStatement(
 						"SELECT q.*, qa.progress " +
-						"FROM quests_active qa " +
-						"JOIN quests q ON q.id = qa.quest_id " +
+						"FROM quests_active AS qa " +
+						"JOIN quests AS q ON q.id = qa.quest_id " +
 						"WHERE qa.player_name = ? "
 					);
 				query.setString(1, p.getName().toLowerCase());
 				results = query.executeQuery();
 				while (results.next()) {
 					QuestInfo q = new QuestInfo(
-							results.getString("id"),
-							results.getString("quest_type"),
-							results.getString("quest_name"),
-							results.getString("quest_desc"),
-							results.getString("start_npc"),
-							results.getString("end_npc"),
-							results.getString("prereq"),
-							results.getString("items_provided"),
-							results.getString("rewards"),
-							results.getString("location"),
-							results.getString("data"),
-							results.getString("completion_text"),
-							results.getString("rankreq"),
-							results.getString("rankreward"),
-							results.getString("cost"),
-							results.getString("prize")
-						);
+                        results.getString("id"),
+                        results.getString("quest_type"),
+                        results.getString("quest_name"),
+                        results.getString("quest_desc"),
+                        results.getString("start_npc"),
+                        results.getString("end_npc"),
+                        results.getString("prereq"),
+                        results.getString("items_provided"),
+                        results.getString("rewards"),
+                        results.getString("location"),
+                        results.getString("data"),
+                        results.getString("completion_text"),
+                        results.getString("rankreq"),
+                        results.getString("rankreward"),
+                        results.getString("cost"),
+                        results.getString("prize")
+                    );
 					String s = results.getString("progress");
 					quests.put(q,s);
 				}
@@ -401,7 +430,7 @@ public class CraftizenSQLDataSource extends CraftizenDataSource {
 			PreparedStatement query = null;
 			ResultSet results = null;
 			try {
-				conn = etc.getSQLConnection();
+				conn = getSQLConnection();
 				query = conn.prepareStatement("INSERT INTO quests_active (player_name, quest_id) VALUES (?,?)");
 				query.setString(1, player.getName().toLowerCase());
 				query.setString(2, quest.getId());
@@ -425,7 +454,7 @@ public class CraftizenSQLDataSource extends CraftizenDataSource {
 			PreparedStatement query = null;
 			ResultSet results = null;
 			try {
-				conn = etc.getSQLConnection();
+				conn = getSQLConnection();
 				query = conn.prepareStatement("UPDATE quests_active SET progress = ? WHERE player_name = ? AND quest_id = ?");
 				query.setString(1, progress);
 				query.setString(2, player.getName().toLowerCase());
@@ -450,7 +479,7 @@ public class CraftizenSQLDataSource extends CraftizenDataSource {
 			PreparedStatement query = null;
 			ResultSet results = null;
 			try {
-				conn = etc.getSQLConnection();
+				conn = getSQLConnection();
 				query = conn.prepareStatement("DELETE FROM quests_active where player_name = ? AND quest_id = ?");
 				query.setString(1, player.getName().toLowerCase());
 				query.setString(2, quest.getId());
@@ -474,14 +503,14 @@ public class CraftizenSQLDataSource extends CraftizenDataSource {
 			PreparedStatement query = null;
 			ResultSet results = null;
 			try {
-				conn = etc.getSQLConnection();
+				conn = getSQLConnection();
 				query = conn.prepareStatement("DELETE FROM quests_active WHERE player_name = ? AND quest_id = ?");
 				query.setString(1, player.getName().toLowerCase());
 				query.setString(2, quest.getId());
 				query.executeUpdate();
 				query.close();
 				
-				query = conn.prepareStatement("INSERT INTO quests_completed (player_name, quest_id) VALUES (?,?)");
+				query = conn.prepareStatement("INSERT INTO quests_completed (player_name, quest_id, date_completed) VALUES (?,?,CURRENT_TIME)");
 				query.setString(1, player.getName().toLowerCase());
 				query.setString(2, quest.getId());
 				query.executeUpdate();
@@ -505,7 +534,7 @@ public class CraftizenSQLDataSource extends CraftizenDataSource {
 			PreparedStatement query = null;
 			ResultSet results = null;
 			try {
-				conn = etc.getSQLConnection();
+				conn = getSQLConnection();
 				
 				boolean exists = false;
 				query = conn.prepareStatement("SELECT * FROM quests WHERE id = ?");
@@ -583,7 +612,7 @@ public class CraftizenSQLDataSource extends CraftizenDataSource {
 			PreparedStatement query = null;
 			ResultSet results = null;
 			try {
-				conn = etc.getSQLConnection();
+				conn = getSQLConnection();
 				query = conn.prepareStatement("DELETE FROM quests_active WHERE quest_id = ?");
 				query.setString(1, questid);
 				query.executeUpdate();
@@ -612,6 +641,4 @@ public class CraftizenSQLDataSource extends CraftizenDataSource {
 		}	
 		
 	}
-	
-
 }

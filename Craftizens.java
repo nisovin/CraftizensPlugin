@@ -6,9 +6,8 @@ import java.util.logging.*;
 public class Craftizens extends Plugin {
 	static final Logger log = Logger.getLogger("Minecraft");
 	
-	public static boolean DEBUG = true;
-//	public static String NPC_PREFIX = "§e";
-	public static String NPC_PREFIX = "�e";
+	public static boolean DEBUG = false;
+	public static String NPC_PREFIX = Colors.Yellow;
 	public static String NPC_SUFFIX = " (NPC)";
 	public static String TEXT_COLOR = Colors.Yellow;
 	public static int INTERACT_ITEM = 340;
@@ -17,7 +16,12 @@ public class Craftizens extends Plugin {
 	public static int INTERACT_ANGLE_VARIATION = 25;
 	public static int QADMIN_BOUNDARY_MARKER = 340;
 	public static boolean QUESTS_ENABLED = true;
+    public static String DATA_SOURCE_DRIVER_NAME = "";
+    public static String DATA_SOURCE_CONNECTION_URL = "";
+    public static String DATA_SOURCE_USERNAME = "";
+    public static String DATA_SOURCE_PASSWORD = "";
 	public static boolean ICONOMY_DETECTED = false;
+    public static String NAME = "Craftizens";
 	public static String VERSION = "v0.7.2";
 	
 	public static CraftizenDataSource data;
@@ -43,18 +47,22 @@ public class Craftizens extends Plugin {
 	public void enable() {
 		// load properties
 		PropertiesFile props = new PropertiesFile("craftizens.properties");
-		DEBUG = props.getBoolean("debug-mode",false);
-		NPC_PREFIX = props.getString("npc-name-prefix","§e");
-		NPC_SUFFIX = props.getString("npc-name-suffix"," (NPC)");
-		TEXT_COLOR = "§" + props.getString("quest-text-color","e");
-		INTERACT_ITEM = props.getInt("npc-interact-item",340);
-		INTERACT_ITEM_2 = props.getInt("npc-interact-item-2",340);
-		INTERACT_RANGE = props.getInt("npc-interact-range",2);
-		INTERACT_ANGLE_VARIATION = props.getInt("npc-interact-angle-variation",25);
-		QADMIN_BOUNDARY_MARKER = props.getInt("qadmin-boundary-marker",340);
-		QUESTS_ENABLED = props.getBoolean("quests-enabled",true);
-		
-		data = new CraftizenSQLDataSource();
+		DEBUG = props.getBoolean("debug-mode", DEBUG);
+		NPC_PREFIX = props.getString("npc-name-prefix", NPC_PREFIX);
+		NPC_SUFFIX = props.getString("npc-name-suffix", NPC_SUFFIX);
+		TEXT_COLOR = props.getString("quest-text-color", TEXT_COLOR);
+		INTERACT_ITEM = props.getInt("npc-interact-item", INTERACT_ITEM);
+		INTERACT_ITEM_2 = props.getInt("npc-interact-item-2", INTERACT_ITEM_2);
+		INTERACT_RANGE = props.getInt("npc-interact-range", INTERACT_RANGE);
+		INTERACT_ANGLE_VARIATION = props.getInt("npc-interact-angle-variation", INTERACT_ANGLE_VARIATION);
+		QADMIN_BOUNDARY_MARKER = props.getInt("qadmin-boundary-marker", QADMIN_BOUNDARY_MARKER);
+		QUESTS_ENABLED = props.getBoolean("quests-enabled", QUESTS_ENABLED);
+        DATA_SOURCE_DRIVER_NAME = props.getString("data-source-driver-name", DATA_SOURCE_DRIVER_NAME);
+        DATA_SOURCE_CONNECTION_URL = props.getString("data-source-connection-url", DATA_SOURCE_CONNECTION_URL);
+        DATA_SOURCE_USERNAME = props.getString("data-source-username", DATA_SOURCE_USERNAME);
+        DATA_SOURCE_PASSWORD = props.getString("data-source-password", DATA_SOURCE_PASSWORD);
+
+        data = new CraftizenSQLDataSource();
 	
 		loadiConomy();
 		
@@ -72,7 +80,7 @@ public class Craftizens extends Plugin {
 			CraftizensListener.loadActiveQuests(p);
 		}
 		
-		log.info("[Craftizens] Craftizens " + VERSION + " loaded successfully!");
+		log.info("[" + NAME + "] Plugin " + VERSION + " loaded successfully!");
 	}
 	
 	public void disable() {
@@ -113,11 +121,11 @@ public class Craftizens extends Plugin {
 
 			// Data
 			iData.setup(mysql, 0, driver, user, pass, db);
-			log.info("[Craftizens] iConomy loaded successfully.");
+			log.info("[" + NAME + "] iConomy loaded successfully.");
 			ICONOMY_DETECTED = true;
 			return true;
 		} else {
-			log.warning("[Craftizens] iConomy failed to load.");
+			log.warning("[" + NAME + "] iConomy failed to load.");
 			ICONOMY_DETECTED = false;
 			return false;
 		}
