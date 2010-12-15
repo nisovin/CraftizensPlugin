@@ -16,6 +16,8 @@ public abstract class NonPlayerCharacter {
         teleportTo(x,y,z,rotation,pitch);
         if (itemInHand > 0) {
             setItemInHand(itemInHand);
+        } else {
+            setItemInHand(0);
         }
     
         handler = new gw(user, 512,  1 , true );
