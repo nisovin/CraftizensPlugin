@@ -38,11 +38,11 @@ CREATE TABLE quests_completed (
   PRIMARY KEY (player_name,quest_id)
 );
 
--- v0.2 update
+/* v0.2 update */
 
 ALTER TABLE craftizens ADD COLUMN item_in_hand INT DEFAULT 0 NOT NULL;
 
--- v0.5 update
+/* v0.5 update */
 
 ALTER TABLE quests ADD COLUMN completion_text VARCHAR(512) DEFAULT NULL;
 
@@ -53,15 +53,15 @@ CREATE TABLE craftizens_dialog (
   PRIMARY KEY (npc_id,dialog_id)
 );
 
--- v0.6 update
+/* v0.6 update */
 
 ALTER TABLE craftizens ADD COLUMN route_type VARCHAR(8) DEFAULT NULL;
 ALTER TABLE craftizens ADD COLUMN route VARCHAR(512) DEFAULT NULL;
 
--- v0.7 update
+/* v0.7 update */
 ALTER TABLE quests ADD COLUMN rankreq VARCHAR(12) DEFAULT NULL BEFORE location;
 ALTER TABLE quests ADD COLUMN rankreward VARCHAR(12) DEFAULT NULL BEFORE location;
 
--- v0.7.1 update
+/* v0.7.1 update */
 ALTER TABLE quests ADD COLUMN cost VARCHAR(12) DEFAULT '0' BEFORE location;
 ALTER TABLE quests ADD COLUMN prize VARCHAR(12) DEFAULT '0' BEFORE location;

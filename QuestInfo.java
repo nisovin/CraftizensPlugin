@@ -96,7 +96,7 @@ public class QuestInfo {
 		}
 	}
 	
-	// this function uses hardcoded € because iConomy is not a singleton
+	// this function uses hardcoded because iConomy is not a singleton
 	// so I can't get iConony.moneyName
 	public boolean checkBalance(Player player, boolean deduct) {
 		if (Craftizens.ICONOMY_DETECTED) {

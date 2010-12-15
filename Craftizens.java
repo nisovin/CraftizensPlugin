@@ -22,7 +22,7 @@ public class Craftizens extends Plugin {
     public static String DATA_SOURCE_PASSWORD = "";
 	public static boolean ICONOMY_DETECTED = false;
     public static String NAME = "Craftizens";
-	public static String VERSION = "v0.7.2";
+	public static String VERSION = "v0.7.2-with-jdbc-support";
 	
 	public static CraftizenDataSource data;
 	public static HashSet<Craftizen> npcs;
