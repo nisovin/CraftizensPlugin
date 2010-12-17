@@ -5,4 +5,4 @@
 0.7.2 - Added support for JDBC; Currently HyperSQL and SQLite
 
 Find latest compiled JAR here:
-https://github.com/THExSYSTEM/CraftizensPlugin/
+https://github.com/THExSYSTEM/CraftizensPlugin/downloads/
