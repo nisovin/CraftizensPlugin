@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." name="Craftizens-Plugin" default="dist">
+	<property name="projectName" value="Craftizens"/>
+	<property name="projectId" value="craftizens"/>
+	<property name="version" value="0.7.2"/>
+	<property name="src" location="src"/>
+	<property name="lib" location="lib"/>
+	<property name="bin" location="bin"/>
+	<property name="dist" location="dist"/>
+	<property name="manifestMf" value="MANIFEST.MF"/>
+	<property name="craftizensJar" value="${projectName}.jar"/>
+	<property name="sqliteJar" value="sqlitejdbc.jar"/>
+	<property name="sqliteClassPath" value="../${projectId}/lib/${sqliteJar}"/>
+	<property name="hsqldbJar" value="hsqldb.jar"/>
+	<property name="hsqldbClassPath" value="../${projectId}/lib/${hsqldbJar}"/>
+	<property name="minecraftServerJar" value="Minecraft_Server.jar"/>
+	<property name="minecraftModJar" value="Minecraft_Mod.jar"/>
+
+	<target name="clean">
+		<delete dir="${bin}"/>
+		<delete dir="${dist}"/>
+	</target>
+
+	<target name="compile" depends="clean">
+		<mkdir dir="${bin}"/>
+		<javac srcdir="${src}" includes="*.java" destdir="${bin}">
+			<classpath>
+				<pathelement location="${lib}/${minecraftServerJar}"/>
+				<pathelement location="${lib}/${minecraftModJar}"/>
+				<pathelement location="${lib}/${sqliteJar}"/>
+				<pathelement location="${lib}/${hsqldbJar}"/>
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="mainfest">
+		<manifest file="${bin}/${manifestMf}">
+			<attribute name="Manifest-Version" value="1.0"/>
+			<attribute name="Project" value="${projectName}"/>
+			<attribute name="Version" value="${version}"/>
+			<attribute name="Class-Path" value="${sqliteClassPath} ${hsqldbClassPath}"/>
+		</manifest>
+	</target>
+	<target name="dist" depends="compile,mainfest">
+		<mkdir dir="${dist}"/>
+		<mkdir dir="${dist}/${projectId}"/>
+		<mkdir dir="${dist}/${projectId}/lib"/>
+		<mkdir dir="${dist}/plugins"/>
+		<jar destfile="${dist}/plugins/${craftizensJar}" manifest="${bin}/${manifestMf}" includes="*.class" basedir="${bin}"/>
+	</target>
+
+	<target name="sqlite3">
+		<property name="sqlite3-bin" location="/usr/bin/sqlite3"/>
+		<property name="sqlite3-db" value="sqlite3.db"/>
+		<copy file="${lib}/${sqliteJar}" tofile="${dist}/${projectId}/lib/${sqliteJar}"/>
+		<exec executable="${sqlite3-bin}">
+			<arg value="-init"/>
+			<arg value="${projectId}.sqlite3.sql"/>
+			<arg value="${dist}/${projectId}/${sqlite3-db}"/>
+		</exec>
+		<propertyfile file="${dist}/${projectId}.properties">
+			<entry key="data-source-driver-name" value="org.sqlite.JDBC"/>
+			<entry key="data-source-connection-url" value="jdbc:sqlite:${projectId}/${sqlite3-db}"/>
+			<entry key="data-source-username" value=""/>
+			<entry key="data-source-password" value=""/>
+		</propertyfile>
+	</target>
+
+	<target name="hsql">
+		<property name="hsql-tool" value="${lib}/hsqltool.jar"/>
+		<property name="hsql-db" value="hsql.db"/>
+		<copy file="${lib}/${hsqldbJar}" tofile="${dist}/${projectId}/lib/${hsqldbJar}"/>
+		<java jar="${hsql-tool}" fork="true">
+			<arg value="--inlineRc=url=jdbc:hsqldb:file:${dist}/${projectId}/${hsql-db};shutdown=true,user=${projectId},password="/>
+			<arg value="${projectId}.hysql.sql"/>
+		</java>
+		<propertyfile file="${dist}/${projectId}.properties">
+			<entry key="data-source-driver-name" value="org.hsqldb.jdbc.JDBCDriver"/>
+			<entry key="data-source-connection-url" value="jdbc:hsqldb:file:${projectId}/${hsql-db};ifexists=true"/>
+			<entry key="data-source-username" value="${projectId}"/>
+			<entry key="data-source-password" value=""/>
+		</propertyfile>
+	</target>
+</project>
