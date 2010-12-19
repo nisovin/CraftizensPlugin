@@ -7,32 +7,20 @@ import java.util.HashMap;
 
 public class CraftizenSQLDataSource extends CraftizenDataSource {
 	static final Logger log = Logger.getLogger("Minecraft");
-    static protected Connection connection = null;
 
     static public Connection getSQLConnection() throws SQLException
     {
-        if (connection == null) {
-            if (Craftizens.DATA_SOURCE_DRIVER_NAME.isEmpty()) {
-                connection = etc.getSQLConnection();
-            } else {
-                try {
-                    Class.forName(Craftizens.DATA_SOURCE_DRIVER_NAME);
-                } catch (ClassNotFoundException ex) {
-                    log.log(Level.SEVERE, null, ex);
-                    return null;
-                }
-                connection = DriverManager.getConnection(Craftizens.DATA_SOURCE_CONNECTION_URL, Craftizens.DATA_SOURCE_USERNAME, Craftizens.DATA_SOURCE_PASSWORD);
-            }
+    	Connection connection = null;
+        if (Craftizens.DATA_SOURCE_DRIVER_NAME.isEmpty()) {
+            connection = etc.getSQLConnection();
         } else {
-            if (connection.isClosed()) {
-                connection = null;
-                log.info("[" + Craftizens.NAME + "] SQL-Connection got closed; Reconnecting!");
-                return getSQLConnection();
-            } else if (!connection.isValid(0)) {
-                connection = null;
-                log.info("[" + Craftizens.NAME + "] SQL-Connection got invalid; Reconnecting!");
-                return getSQLConnection();
+            try {
+                Class.forName(Craftizens.DATA_SOURCE_DRIVER_NAME);
+            } catch (ClassNotFoundException ex) {
+                log.log(Level.SEVERE, null, ex);
+                return null;
             }
+            connection = DriverManager.getConnection(Craftizens.DATA_SOURCE_CONNECTION_URL, Craftizens.DATA_SOURCE_USERNAME, Craftizens.DATA_SOURCE_PASSWORD);
         }
         return connection;
     }
