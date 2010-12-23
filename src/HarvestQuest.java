@@ -41,9 +41,9 @@ public class HarvestQuest extends Quest {
 	public void complete() {
 		Inventory inv = player.getInventory();
 		for (int i = 0; i < types.size(); i++) {
-			inv.removeItem(new Item(types.get(i), quantities[i]));
+			inv.removeItem(types.get(i), quantities[i]);
 		}
-		inv.updateInventory();
+		inv.update();
 		super.complete();
 	}
 	
@@ -70,7 +70,7 @@ public class HarvestQuest extends Quest {
 	public int countItems(int itemId) {
 		Inventory inv = player.getInventory();
 		int amt = 0;
-		for (int i = 0; i < inv.getArray().length; i++) {
+		for (int i = 0; i < inv.getContents().length; i++) {
 			Item item = inv.getItemFromSlot(i);
 			if (item != null && item.getItemId() == itemId) {
 				amt += item.getAmount();

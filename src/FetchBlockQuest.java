@@ -57,7 +57,7 @@ public class FetchBlockQuest extends Quest {
 		for (int i = 0; i < types.length; i++) {
 			inv.removeItem(new Item(types[i], 1));
 		}
-		inv.updateInventory();
+		inv.update();
 		super.complete();
 	}
 	
