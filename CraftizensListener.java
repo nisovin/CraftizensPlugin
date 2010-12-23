@@ -304,7 +304,7 @@ public class CraftizensListener extends PluginListener {
 			}
 			
 		// iConomy Hook
-		} else if (command[1].equalsIgnoreCase("iConomy")) {
+		} else if (command.length >= 2 && command[1].equalsIgnoreCase("iConomy")) {
 			if (command.length > 2 && command[2].equals("-disable")) {
 				Craftizens.ICONOMY_DETECTED = false;
 				player.sendMessage("iConomy disabled. Use /qadmin iConomy to turn it back on.");
