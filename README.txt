@@ -4,5 +4,7 @@
 
 0.7.2 - Added support for JDBC; Currently HyperSQL and SQLite
 
+0.8.0 - Bugfixes, updated for Beta
+
 Find latest compiled JAR here:
-https://github.com/THExSYSTEM/CraftizensPlugin/downloads/
+http://www.stwing.upenn.edu/~martinja/minecraft/
