@@ -16,6 +16,7 @@ public class Craftizens extends Plugin {
 	public static int INTERACT_ANGLE_VARIATION = 25;
 	public static int QADMIN_BOUNDARY_MARKER = 340;
 	public static boolean QUESTS_ENABLED = true;
+	public static boolean FLATFILE_DATA = false;
     public static String DATA_SOURCE_DRIVER_NAME = "";
     public static String DATA_SOURCE_CONNECTION_URL = "";
     public static String DATA_SOURCE_USERNAME = "";
@@ -57,12 +58,16 @@ public class Craftizens extends Plugin {
 		INTERACT_ANGLE_VARIATION = props.getInt("npc-interact-angle-variation", INTERACT_ANGLE_VARIATION);
 		QADMIN_BOUNDARY_MARKER = props.getInt("qadmin-boundary-marker", QADMIN_BOUNDARY_MARKER);
 		QUESTS_ENABLED = props.getBoolean("quests-enabled", QUESTS_ENABLED);
-        DATA_SOURCE_DRIVER_NAME = props.getString("data-source-driver-name", DATA_SOURCE_DRIVER_NAME);
+        FLATFILE_DATA = props.getBoolean("flatfile-data-enabled", FLATFILE_DATA);
+		DATA_SOURCE_DRIVER_NAME = props.getString("data-source-driver-name", DATA_SOURCE_DRIVER_NAME);
         DATA_SOURCE_CONNECTION_URL = props.getString("data-source-connection-url", DATA_SOURCE_CONNECTION_URL);
         DATA_SOURCE_USERNAME = props.getString("data-source-username", DATA_SOURCE_USERNAME);
         DATA_SOURCE_PASSWORD = props.getString("data-source-password", DATA_SOURCE_PASSWORD);
 
-        data = new CraftizenSQLDataSource();
+        if (FLATFILE_DATA)
+        	data = new CraftizenFlatfileDataSource();
+        else
+        	data = new CraftizenSQLDataSource();
 	
 		loadiConomy();
 		
