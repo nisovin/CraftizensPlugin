@@ -19,6 +19,8 @@ public abstract class NonPlayerCharacter {
         teleportTo(x,y,z,rotation,pitch);
         if (itemInHand > 0) {
             setItemInHand(itemInHand);
+        } else {
+            setItemInHand(0);
         }
     
         // XXX: VARIABLE TYPE ON AN UPDATE
