@@ -124,7 +124,8 @@ public abstract class Quest {
 			cx /= (6*area);
 			cy /= (6*area);
 			
-			player.getUser().a.b(new co((int)cx, (int)player.getY(), (int)cy));
+		    // XXX: VARIABLE TYPE ON AN UPDATE
+			player.getUser().a.b(new da((int)cx, (int)player.getY(), (int)cy));
 			
 			return true;
 		} else { 

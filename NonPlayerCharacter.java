@@ -4,30 +4,36 @@ import java.util.List;
 public abstract class NonPlayerCharacter {
     public static List<?> players;
     
-    private et user;
-    private gw handler; 
+    // XXX: VARIABLE TYPE ON AN UPDATE
+    private fi user;
+    // XXX: VARIABLE TYPE ON AN UPDATE
+    private hr handler; 
     
     public NonPlayerCharacter(String name, double x, double y, double z, float rotation, float pitch, int itemInHand) {
         if (players == null) getPlayerList();
     
         MinecraftServer s = etc.getServer().getMCServer();
-        
-        user = new et(s, s.e, name, new jv(s.e));
+
+        // XXX: VARIABLE TYPE ON AN UPDATE
+        user = new fi(s, s.e, name, new kw(s.e));
         teleportTo(x,y,z,rotation,pitch);
         if (itemInHand > 0) {
             setItemInHand(itemInHand);
         }
     
-        handler = new gw(user, 512,  1 , true );
+        // XXX: VARIABLE TYPE ON AN UPDATE
+        handler = new hr(user, 512,  1 , true );
     }
     
     public void delete() {
         for (Object player : players) {
-            ((et)player).a.b(new di(handler.a.g));
+            // XXX: VARIABLE TYPE ON AN UPDATE
+            ((fi)player).a.b(new dv(handler.a.g));
         }
     }
     
     public void untrack(Player player) {
+        // XXX: VARIABLE TYPE ON AN UPDATE
     	if (handler.q.contains(player.getUser())) {
     		handler.q.remove(player.getUser());
     	}
@@ -42,11 +48,13 @@ public abstract class NonPlayerCharacter {
     }
     
     public String getName() {
-        return user.at;
+        // XXX: VARIABLE TYPE ON AN UPDATE
+        return user.aw;
     }
     
     public void setName(String name) {
-        user.at = name;
+        // XXX: VARIABLE TYPE ON AN UPDATE
+        user.aw = name;
     }
     
     public double getX() {
@@ -90,11 +98,14 @@ public abstract class NonPlayerCharacter {
     }
     
     public int getItemInHand() {
-        return user.am.a[0].c;
+        // XXX: VARIABLE TYPE ON AN UPDATE
+    	if (user.an.a[0] == null) return 0;
+        return user.an.a[0].c;
     }
     
     public void setItemInHand(int type) {
-        user.am.a[0] = new hn(type);
+        // XXX: VARIABLE TYPE ON AN UPDATE
+        user.an.a[0] = new il(type);
     }
     
     public void teleportTo(double x, double y, double z, float rotation, float pitch) {
