@@ -20,7 +20,7 @@ public class CraftizensListener extends PluginListener {
 	}
 	
 	public void npcCommand(Player player, String [] command) {	
-		if (command[1].equals("clear")) {
+		if (command.length > 1 && command[1].equals("clear")) {
 			for (Craftizen npc : Craftizens.npcs) {
 				npc.delete();
 			}
