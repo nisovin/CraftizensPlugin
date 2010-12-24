@@ -58,6 +58,9 @@ public abstract class Quest {
 	
 	private void setRank(Player p, String rank) {
 		etc.getInstance();
+		
+		if (rank.isEmpty()) return;
+		
 		Group g = etc.getDataSource().getGroup(rank);
 		if (g != null) {
 			String[] arrayOfString = { g.Name };
