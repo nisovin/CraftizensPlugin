@@ -25,7 +25,14 @@ public class CraftizensListener extends PluginListener {
 				npc.delete();
 			}
 			Craftizens.npcs.clear();
-		} else if (command[1].equals("create") && command.length > 3) {
+		} else if (command.length > 1 && command[1].equals("list")) {
+			for (Craftizen npc : Craftizens.npcs) {
+				player.sendMessage(Craftizens.TEXT_COLOR + npc.getId() + " - " + npc.getName() + " - " +
+						((int) Math.floor(npc.getX())) + "," + 
+						((int) Math.floor(npc.getY())) + "," + 
+						((int) Math.floor(npc.getZ())) + ",");
+			}
+		} else if (command.length > 3 && command[1].equals("create")) {
 			String id = command[2];
 			String n = "";
 			for (int i = 3; i < command.length; i++) {
@@ -38,7 +45,7 @@ public class CraftizensListener extends PluginListener {
 		
 			player.sendMessage("NPC '" + id + "' created.");
 			
-		} else if (command[1].equals("adddialog") && command.length > 4) {
+		} else if (command.length > 4 && command[1].equals("adddialog")) {
 			String npcid = command[2];
 			String dialogid = command[3];
 			String dialog = "";
@@ -55,13 +62,19 @@ public class CraftizensListener extends PluginListener {
 				player.sendMessage("No such npc");
 			}
 		
-		} else if (command[1].equals("delete") && command.length == 3) {
+		} else if (command.length == 3 && command[1].equals("delete")) {
 			
 			Craftizen.delete(command[2]);
 			Craftizens.data.deleteCraftizen(command[2]);
 			
 			player.sendMessage("NPC '" + command[2] + "' deleted.");
 			
+		} else {
+			player.sendMessage(Craftizens.TEXT_COLOR + "Usage instructions:");
+			player.sendMessage(Craftizens.TEXT_COLOR + "   /npc list - list your npcs");
+			player.sendMessage(Craftizens.TEXT_COLOR + "   /npc create <id> <name> - create a new npc");
+			player.sendMessage(Craftizens.TEXT_COLOR + "   /npc adddialog <npcid> <dialogid> <dialogtext> - add some dialog for your npc");
+			player.sendMessage(Craftizens.TEXT_COLOR + "   /npc delete <id> - delete your npc");	
 		}
 	
 	}
