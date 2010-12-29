@@ -6,7 +6,7 @@ public class CraftizensListener extends PluginListener {
 	static final Logger log = Logger.getLogger("Minecraft");
 
 	public boolean onCommand(Player player, String [] split) {
-		if (split[0].equals("/npc") && player.canUseCommand("/npc")) {
+		if (split[0].equals("/craftnpc") && player.canUseCommand("/craftnpc")) {
 			npcCommand(player, split);
 			return true;
 		} else if ((split[0].equalsIgnoreCase("/quest") || split[0].equalsIgnoreCase("/q")) && player.canUseCommand("/quest")) {
