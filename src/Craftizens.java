@@ -23,7 +23,7 @@ public class Craftizens extends Plugin {
     public static String DATA_SOURCE_PASSWORD = "";
 	public static boolean ICONOMY_DETECTED = false;
     public static String NAME = "Craftizens";
-	public static String VERSION = "v0.8.0";
+	public static String VERSION = "v0.8.1";
 	
 	public static CraftizenDataSource data;
 	public static HashSet<Craftizen> npcs;
@@ -46,6 +46,10 @@ public class Craftizens extends Plugin {
 	}
 	
 	public void enable() {
+		etc.getInstance().addCommand("/craftnpc", "Create an npc");
+		etc.getInstance().addCommand("/quest", "Command for working with your quests");
+		etc.getInstance().addCommand("/qadmin", "Create, modify, delete, control the quests on your server");
+		
 		// load properties
 		PropertiesFile props = new PropertiesFile("craftizens.properties");
 		DEBUG = props.getBoolean("debug-mode", DEBUG);
@@ -89,6 +93,10 @@ public class Craftizens extends Plugin {
 	}
 	
 	public void disable() {
+		etc.getInstance().removeCommand("/craftnpc");
+		etc.getInstance().removeCommand("/quest");
+		etc.getInstance().removeCommand("/qadmin");
+		
 		ticker.stop();
 		ticker = null;
 		
@@ -114,8 +122,13 @@ public class Craftizens extends Plugin {
 	}
 	
 	public static boolean loadiConomy() {
-		if (etc.getLoader().getPlugin("iConomy") != null) {
+		if (etc.getLoader().getPlugin("iConomy") != null && etc.getLoader().getPlugin("iConomy").isEnabled()) {
 			PropertiesFile iConomySettings = new PropertiesFile(iData.mainDir + "settings.properties");
+			if (!iConomySettings.containsKey("use-mysql")) {
+				log.warning("[" + NAME + "] iConomy settings failed to be read.");
+				ICONOMY_DETECTED = false;
+				return false;
+			}
 			boolean mysql = iConomySettings.getBoolean("use-mysql", false);
 			
 			// MySQL
