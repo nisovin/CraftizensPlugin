@@ -172,76 +172,79 @@ public class CraftizenFlatfileDataSource extends CraftizenDataSource
 		{
 			ArrayList<QuestInfo> quests = new ArrayList<QuestInfo>();
 			// getting quests this NPC has
-			for (String q : npcQuests.get(c.id))
-			{
-				// now we only add QuestInfo objects that the player can
-				// actually access
-				QuestInfo quest = loadQuestInfo(q);
-
-				// logic for ranks
-				String[] groups = p.getGroups();
-				if (groups.length > 0)
+			ArrayList<String> questNames = npcQuests.get(c.id);
+			if (questNames != null) {
+				for (String q : npcQuests.get(c.id))
 				{
-					if (groups[0] == null || groups[0].equals(""))
+					// now we only add QuestInfo objects that the player can
+					// actually access
+					QuestInfo quest = loadQuestInfo(q);
+	
+					// logic for ranks
+					String[] groups = p.getGroups();
+					if (groups.length > 0)
+					{
+						if (groups[0] == null || groups[0].equals(""))
+						{
+							if (!quest.rankReq.isEmpty())
+							{
+								continue;
+							}
+						}
+						else
+						{
+							if ((!quest.rankReq.isEmpty())
+									&& (!quest.rankReq.equalsIgnoreCase(groups[0])))
+							{
+								continue;
+							}
+						}
+					}
+					else
 					{
 						if (!quest.rankReq.isEmpty())
 						{
 							continue;
 						}
 					}
-					else
+	
+					PropertiesFile player = loadPlayer(p);
+					// logic for active quests
+					String[] activeQuests = player.getString("active-quests")
+							.split(",");
+					boolean activeFound = false;
+					for (String aq : activeQuests)
 					{
-						if ((!quest.rankReq.isEmpty())
-								&& (!quest.rankReq.equalsIgnoreCase(groups[0])))
+						if (aq.equalsIgnoreCase(q))
 						{
-							continue;
+							activeFound = true;
+							break;
 						}
 					}
-				}
-				else
-				{
-					if (!quest.rankReq.isEmpty())
+					if (activeFound)
 					{
 						continue;
 					}
-				}
-
-				PropertiesFile player = loadPlayer(p);
-				// logic for active quests
-				String[] activeQuests = player.getString("active-quests")
-						.split(",");
-				boolean activeFound = false;
-				for (String aq : activeQuests)
-				{
-					if (aq.equalsIgnoreCase(q))
+					// logic for already completed quests
+					String[] completedQuests = player.getString("completed-quests")
+							.split(",");
+					boolean completedFound = false;
+					for (String cq : completedQuests)
 					{
-						activeFound = true;
-						break;
+						if (cq.equalsIgnoreCase(q))
+						{
+							completedFound = true;
+							break;
+						}
 					}
-				}
-				if (activeFound)
-				{
-					continue;
-				}
-				// logic for already completed quests
-				String[] completedQuests = player.getString("completed-quests")
-						.split(",");
-				boolean completedFound = false;
-				for (String cq : completedQuests)
-				{
-					if (cq.equalsIgnoreCase(q))
+					if (completedFound)
 					{
-						completedFound = true;
-						break;
+						continue;
 					}
+	
+					// add the quest to the list
+					quests.add(quest);
 				}
-				if (completedFound)
-				{
-					continue;
-				}
-
-				// add the quest to the list
-				quests.add(quest);
 			}
 			return quests;
 		}
