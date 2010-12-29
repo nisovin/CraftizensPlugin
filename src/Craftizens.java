@@ -21,6 +21,7 @@ public class Craftizens extends Plugin {
     public static String DATA_SOURCE_CONNECTION_URL = "";
     public static String DATA_SOURCE_USERNAME = "";
     public static String DATA_SOURCE_PASSWORD = "";
+    public static boolean REPLACE_GROUP = true;
 	public static boolean ICONOMY_DETECTED = false;
     public static String NAME = "Craftizens";
 	public static String VERSION = "v0.8.1";
@@ -67,6 +68,7 @@ public class Craftizens extends Plugin {
         DATA_SOURCE_CONNECTION_URL = props.getString("data-source-connection-url", DATA_SOURCE_CONNECTION_URL);
         DATA_SOURCE_USERNAME = props.getString("data-source-username", DATA_SOURCE_USERNAME);
         DATA_SOURCE_PASSWORD = props.getString("data-source-password", DATA_SOURCE_PASSWORD);
+        REPLACE_GROUP = props.getBoolean("replace-group", REPLACE_GROUP);
 
         if (FLATFILE_DATA)
         	data = new CraftizenFlatfileDataSource();

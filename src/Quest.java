@@ -1,4 +1,5 @@
 import java.awt.Polygon;
+import java.util.ArrayList;
 
 public abstract class Quest {
 
@@ -63,8 +64,25 @@ public abstract class Quest {
 		
 		Group g = etc.getDataSource().getGroup(rank);
 		if (g != null) {
-			String[] arrayOfString = { g.Name };
-			p.setGroups(arrayOfString);
+			String[] groupList = null;
+			if (Craftizens.REPLACE_GROUP) {
+				groupList = new String[]{ g.Name };
+			} else {
+				groupList = p.getGroups();
+				if (groupList != null && groupList.length > 0) {
+					String[] fullList = new String[groupList.length + 1];
+					fullList[0] = g.Name;
+					int i = 0;
+					for (String group : groupList) {
+						i++;
+						fullList[i] = group;
+					}
+					groupList = fullList;
+				} else {
+					groupList = new String[]{ g.Name };
+				}
+			}
+			p.setGroups(groupList);
 			p.setIgnoreRestrictions(g.IgnoreRestrictions);
 			p.setAdmin(g.Administrator);
 
