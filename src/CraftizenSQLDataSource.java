@@ -498,7 +498,7 @@ public class CraftizenSQLDataSource extends CraftizenDataSource {
 				query.executeUpdate();
 				query.close();
 				
-				query = conn.prepareStatement("INSERT INTO quests_completed (player_name, quest_id, date_completed) VALUES (?,?,CURRENT_TIME)");
+				query = conn.prepareStatement("INSERT INTO quests_completed (player_name, quest_id) VALUES (?,?)");
 				query.setString(1, player.getName().toLowerCase());
 				query.setString(2, quest.getId());
 				query.executeUpdate();
