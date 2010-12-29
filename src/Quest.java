@@ -1,5 +1,4 @@
 import java.awt.Polygon;
-import java.util.ArrayList;
 
 public abstract class Quest {
 
