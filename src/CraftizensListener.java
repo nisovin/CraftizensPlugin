@@ -670,7 +670,7 @@ public class CraftizensListener extends PluginListener {
 	}
 	
 	public void onArmSwing(Player player) {
-		if (player.getItemInHand() == Craftizens.INTERACT_ITEM || player.getItemInHand() == Craftizens.INTERACT_ITEM_2) {
+		if (Craftizens.INTERACT_ANYTHING || player.getItemInHand() == Craftizens.INTERACT_ITEM || player.getItemInHand() == Craftizens.INTERACT_ITEM_2) {
 			if (Craftizens.DEBUG) log.info("Player " + player.getName() + " trying to check quest");
 			for (Craftizen npc : Craftizens.npcs) {
 				if (Craftizens.DEBUG) log.info("--checking npc " + npc.getName());

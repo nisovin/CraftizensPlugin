@@ -14,6 +14,7 @@ public class Craftizens extends Plugin {
 	public static int INTERACT_ITEM_2 = 340;
 	public static int INTERACT_RANGE = 2;
 	public static int INTERACT_ANGLE_VARIATION = 25;
+	public static boolean INTERACT_ANYTHING = false;
 	public static int QADMIN_BOUNDARY_MARKER = 340;
 	public static boolean QUESTS_ENABLED = true;
 	public static boolean FLATFILE_DATA = false;
@@ -61,6 +62,7 @@ public class Craftizens extends Plugin {
 		INTERACT_ITEM_2 = props.getInt("npc-interact-item-2", INTERACT_ITEM_2);
 		INTERACT_RANGE = props.getInt("npc-interact-range", INTERACT_RANGE);
 		INTERACT_ANGLE_VARIATION = props.getInt("npc-interact-angle-variation", INTERACT_ANGLE_VARIATION);
+		INTERACT_ANYTHING = props.getBoolean("interact-anything", INTERACT_ANYTHING);
 		QADMIN_BOUNDARY_MARKER = props.getInt("qadmin-boundary-marker", QADMIN_BOUNDARY_MARKER);
 		QUESTS_ENABLED = props.getBoolean("quests-enabled", QUESTS_ENABLED);
         FLATFILE_DATA = props.getBoolean("flatfile-data-enabled", FLATFILE_DATA);
