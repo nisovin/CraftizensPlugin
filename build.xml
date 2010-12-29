@@ -2,7 +2,7 @@
 <project basedir="." name="Craftizens-Plugin" default="dist">
 	<property name="projectName" value="Craftizens"/>
 	<property name="projectId" value="craftizens"/>
-	<property name="version" value="0.7.2_1"/>
+	<property name="version" value="0.8.1"/>
 	<property name="src" location="src"/>
 	<property name="lib" location="lib"/>
 	<property name="bin" location="bin"/>
