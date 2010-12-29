@@ -229,15 +229,22 @@ public class CraftizenFlatfileDataSource extends CraftizenDataSource
 					String[] completedQuests = player.getString("completed-quests")
 							.split(",");
 					boolean completedFound = false;
+					boolean prereqFound = false;
+					boolean hasPrereq = (quest.getPrereq() != null && !quest.getPrereq().isEmpty());
 					for (String cq : completedQuests)
 					{
 						if (cq.equalsIgnoreCase(q))
 						{
 							completedFound = true;
-							break;
+							if (!hasPrereq || prereqFound) break;
+						}
+						if (hasPrereq && cq.equalsIgnoreCase(quest.getPrereq()))
+						{
+							prereqFound = true;
+							if (completedFound) break;
 						}
 					}
-					if (completedFound)
+					if (completedFound || (hasPrereq && !prereqFound))
 					{
 						continue;
 					}

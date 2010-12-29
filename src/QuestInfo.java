@@ -376,4 +376,8 @@ public class QuestInfo {
 	public String getData() {
 		return data;
 	}
+	
+	public String getPrereq() {
+		return prereq;
+	}
 }
