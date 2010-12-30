@@ -26,7 +26,7 @@ public class Craftizens extends Plugin {
 	public static boolean ICONOMY_DETECTED = false;
 	public static boolean ALLOW_COMPASS = true;
     public static String NAME = "Craftizens";
-	public static String VERSION = "v0.8.1";
+	public static String VERSION = "v0.8.2";
 	
 	public static CraftizenDataSource data;
 	public static HashSet<Craftizen> npcs;
