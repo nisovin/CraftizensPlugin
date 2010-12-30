@@ -7,9 +7,9 @@ public class Craftizens extends Plugin {
 	static final Logger log = Logger.getLogger("Minecraft");
 	
 	public static boolean DEBUG = false;
-	public static String NPC_PREFIX = Colors.Yellow;
+	public static String NPC_PREFIX = "\u00C2\u00A7e";
 	public static String NPC_SUFFIX = " (NPC)";
-	public static String TEXT_COLOR = Colors.Yellow;
+	public static String TEXT_COLOR = "\u00C2\u00A7e";
 	public static int INTERACT_ITEM = 340;
 	public static int INTERACT_ITEM_2 = 340;
 	public static int INTERACT_RANGE = 2;
