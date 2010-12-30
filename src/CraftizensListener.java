@@ -71,10 +71,10 @@ public class CraftizensListener extends PluginListener {
 			
 		} else {
 			player.sendMessage(Craftizens.TEXT_COLOR + "Usage instructions:");
-			player.sendMessage(Craftizens.TEXT_COLOR + "   /npc list - list your npcs");
-			player.sendMessage(Craftizens.TEXT_COLOR + "   /npc create <id> <name> - create a new npc");
-			player.sendMessage(Craftizens.TEXT_COLOR + "   /npc adddialog <npcid> <dialogid> <dialogtext> - add some dialog for your npc");
-			player.sendMessage(Craftizens.TEXT_COLOR + "   /npc delete <id> - delete your npc");	
+			player.sendMessage(Craftizens.TEXT_COLOR + "   /craftnpc list - list your npcs");
+			player.sendMessage(Craftizens.TEXT_COLOR + "   /craftnpc create <id> <name> - create a new npc");
+			player.sendMessage(Craftizens.TEXT_COLOR + "   /craftnpc adddialog <npcid> <dialogid> <dialogtext> - add some dialog for your npc");
+			player.sendMessage(Craftizens.TEXT_COLOR + "   /craftnpc delete <id> - delete your npc");	
 		}
 	
 	}
@@ -92,7 +92,7 @@ public class CraftizensListener extends PluginListener {
 // TODO: this is extremely poor programming practice. Need to refactor/fix later.
 						quests = (ArrayList<QuestInfo>) o;
 					} catch (ClassCastException e) {
-						Craftizen.log.warning("[Craftizen] Pending quests was not an ArrayList<QuestInfo>!");
+						Craftizen.log.warning("[Craftizens] Pending quests was not an ArrayList<QuestInfo>!");
 					}
 					int i = -1;
 					try {
@@ -189,7 +189,7 @@ public class CraftizensListener extends PluginListener {
 				player.sendMessage(Craftizens.TEXT_COLOR + "No active quests.");
 			}
 			
-		} else if ("compass".startsWith(command[1].toLowerCase()) && command.length == 3) {
+		} else if (Craftizens.ALLOW_COMPASS && "compass".startsWith(command[1].toLowerCase()) && command.length == 3) {
 			if (Craftizens.activeQuests.containsKey(player.getName())) {
 				ArrayList<Quest> quests = Craftizens.activeQuests.get(player.getName());
 				int i = -1;
@@ -235,7 +235,7 @@ public class CraftizensListener extends PluginListener {
 		player.sendMessage(Craftizens.TEXT_COLOR + "   /quest list - list your active quests");
 		player.sendMessage(Craftizens.TEXT_COLOR + "   /quest progress # - shows progress on the quest");
 		player.sendMessage(Craftizens.TEXT_COLOR + "   /quest desc # - shows the quest description");
-		player.sendMessage(Craftizens.TEXT_COLOR + "   /quest compass # - makes your compass point to the quest");
+		if (Craftizens.ALLOW_COMPASS) player.sendMessage(Craftizens.TEXT_COLOR + "   /quest compass # - makes your compass point to the quest");
 	}
 	
 	public void qadminCommand(Player player, String [] command) {
