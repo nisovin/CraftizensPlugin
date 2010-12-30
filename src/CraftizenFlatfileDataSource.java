@@ -64,8 +64,14 @@ public class CraftizenFlatfileDataSource extends CraftizenDataSource
 							+ file.getName());
 					ArrayList<String> quests = npcQuests.get(data
 							.getString("start_npc"));
-					quests.add(data.getString("id"));
-					npcQuests.put(data.getString("start_npc"), quests);
+					if (quests != null) {
+						quests.add(data.getString("id"));
+						npcQuests.put(data.getString("start_npc"), quests);
+					} else {
+						Craftizens.log.warning("[Craftizens] " + file.getName()
+								+ " has a non-existant start_npc: " + 
+								data.getString("start_npc") + ". Quest not loaded.");
+					}
 				}
 			}
 			return npcs;
